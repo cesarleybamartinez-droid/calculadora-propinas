@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 
 <head>
@@ -12,8 +12,18 @@
 
 <body>
     <header class="app-header">
-        <h1>Calculadora de Propinas y Division de Cuentas</h1>
-        <p>Divide gastos y propinas con exactitud matematica</p>
+        <div class="header-content">
+            <div class="header-text">
+                <h1>Calculadora de Propinas y Division de Cuentas</h1>
+                <p>Divide gastos y propinas con exactitud matematica</p>
+            </div>
+            <!-- Boton accesible para alternar tema -->
+            <button type="button" id="theme-toggle" class="btn-theme-toggle" aria-label="Cambiar a modo oscuro"
+                title="Cambiar tema">
+                <!-- icono que cambiara dinamicamente con JS -->
+                <span id="theme-icon" aria-hidden="true">&#x1F319;</span>
+            </button>
+        </div>
     </header>
 
     <main class="calculator-container">

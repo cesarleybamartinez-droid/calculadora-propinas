@@ -1,4 +1,4 @@
-/*
+﻿/*
 ====================================================================================
 1. Variables de Diseño (Design Tokens)
 Centralizamos colores, sombrea y radios de borde para facil mantenimiento.
@@ -38,6 +38,33 @@ Centralizamos colores, sombrea y radios de borde para facil mantenimiento.
     --shadow-card: 0 10px 25px -5px rgba(13, 148, 136, 0.1), 0 8px 10px -6px rgba(13, 148, 136, 0.1);
 }
 
+/* ==========================================================================
+   PALETA PARA MODO OSCURO (DARK THEME TOKENS)
+   Se activa automáticamente cuando el elemento <html> tiene data-theme="dark"
+   ========================================================================== */
+[data-theme="dark"] {
+    --clr-primary: #14b8a6;
+    /* Verde azulado un poco más brillante */
+    --clr-primary-hover: #2dd4bf;
+
+    --clr-primary-light: #134e4a;
+    /* Fondo oscuro para botones de propina */
+    --clr-bg-app: #0f172a;
+    /* Fondo general oscuro (Slate 900) */
+    --clr-bg-surface: #1e293b;
+    /* Fondo de las tarjetas */
+    --clr-bg-result: #042f2e;
+    /* Fondo oscuro de la tarjeta de resultados */
+    --clr-text-main: #f8fafc;
+    /* Texto blanco hueso de alto contraste */
+    --clr-text-muted: #5eead4;
+    /* Texto secundario para subtitulos claros */
+    --clr-text-light: #f8fafc;
+    /* Texto claro sobre fondo oscuro */
+    --shadow-card: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+
+}
+
 /*===================================================================================
     2. RESET Y CONFIGURACION BASE
     Garatizamos consistencia entre tododos los navegadores (Chrome, Safari, Firefox).
@@ -73,6 +100,57 @@ body {
 /* ==========================================================================
    3. ENCABEZADO Y PIE DE PÁGINA
    ========================================================================== */
+
+/* Transición suave para que el cambio de color no sea brusco al ojo */
+body,
+.calculator-container,
+.form-group input[type="number"],
+.btn-tip,
+.result-section {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Alineación flexible del encabezado con el botón */
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 900px;
+    gap: 1rem;
+    margin: 0 auto;
+}
+
+.header-text {
+    text-align: left;
+}
+
+/*Estilo del  boton circular de cambio de tema */
+.btn-theme-toggle {
+    width: 2.75rem;
+    height: 2.75rem;
+    box-shadow: var(--shadow-card);
+    color: var(--clr-text-main);
+    border-radius: 50%;
+    border: 2px solid var(--clr-primary-light);
+    background-color: var(--clr-bg-surface);
+    cursor: pointer;
+    font-size: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.3s ease, border-color 0.3s ease, background-color 0.3s ease;
+    flex-shrink: 0;
+}
+
+.btn-theme-toggle:hover {
+    transform: scale(1.1) rotate(15deg);
+    border-color: var(--clr-primary);
+}
+
+.btn-theme-toggle:focus-visible {
+    outline: 2px solid var(--clr-primary);
+    outline-offset: 2px;
+}
 
 .app-header {
     text-align: center;
@@ -164,7 +242,7 @@ body {
 .form-group input[type="number"]:focus {
     outline: none;
     border-color: var(--clr-primary);
-    background-color: #ffffff;
+    background-color: var(--clr-bg-surface);
 }
 
 /* Ocultar flechas nativas en campos numericos para mantener el diseño limpio */
@@ -391,4 +469,26 @@ body {
     .result-section {
         padding: 2.25rem;
     }
+}
+
+/* Borde sutil y contraste perfecto de inputs en modo oscuro */
+[data-theme="dark"] .form-group input[type="number"] {
+    border-color: #334155;
+    background-color: #0f172a;
+    color: #f8fafc;
+}
+
+[data-theme="dark"] .form-group input[type="number"]:focus {
+    border-color: var(--clr-primary);
+    background-color: #1e293b;
+    color: #ffffff;
+}
+
+[data-theme="dark"] .app-header p {
+    color: #94a3b8;
+}
+
+.form-group input[type="number"]::placeholder {
+    color: #94a3b8;
+    opacity: 0.7;
 }

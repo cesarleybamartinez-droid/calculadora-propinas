@@ -1,4 +1,4 @@
-/**
+﻿/**
  * ==============================================================================
  * PROYECTO 01: CALCULADORA DE PROPINAS Y DIVISIÓN DE CUENTAS EQUITATIVAS
  * Arquitectura: Separación de Estado, Lógica Pura y Capa de Presentación (DOM)
@@ -188,3 +188,57 @@ resetBtn.addEventListener('click', () => {
     // 4. Actualizar la vista a ceros ($0.00)
     updateUi();
 });
+
+// =============================================================================
+// 6. GESTIÓN DEL TEMA (MODO CLARO / OSCURO) CON PERSISTENCIA
+// =============================================================================
+
+const themeToggleBtn = document.getElementById('theme-toggle');
+const themeIcon = document.getElementById('theme-icon');
+
+/**
+ * Aplica el tema recibido y sincroniza el ícono, accesibilidad y localStorage.
+ * @param {'light' | 'dark'} theme - El tema que queremos aplicar.
+ */
+
+function applyTheme(theme) {
+    // 1. Asignamos o removemos el atributo data-theme en la raíz del documento (<html>)
+    if (theme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        themeIcon.textContent = '☀️'; // Sol para volver al modo claro
+        themeToggleBtn.setAttribute('aria-label', 'Cambiar a modo claro');
+    } else {
+        document.documentElement.removeAttribute('data-theme');
+        themeIcon.textContent = '🌙'; // Luna para modo oscuro
+        themeToggleBtn.setAttribute('aria-label', 'Cambiar a modo oscuro');
+    }
+
+    // 3. Persistencia: Guardamos la preferencia en localStorage (navegador del usuario)
+    localStorage.setItem('theme-preference', theme);
+}
+/**
+ * Inicializa el tema al cargar la página:
+ * 1º Prioridad: Lo que el usuario eligió antes (guardado en localStorage).
+ * 2º Prioridad: La preferencia de su sistema operativo (Windows/Mac en modo oscuro).
+ */
+function initTheme() {
+    const savedTheme = localStorage.getItem('theme-preference');
+
+    // Si el usuario ya habia elegido un tema, lo aplicamos
+    if (savedTheme) {
+        applyTheme(savedTheme);
+    } else {
+
+        // Detectar si el sistema operativo tiene modo oscuro activado por defecto
+        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches; //True si el SO esta en modo oscuro
+        applyTheme(systemPrefersDark ? 'dark' : 'light');
+    }
+}
+// Escuchar el clic en el botón de cambio de tema
+themeToggleBtn.addEventListener('click', () => {
+    const isCurrentlyDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    const newTheme = isCurrentlyDark ? 'light' : 'dark';
+    applyTheme(newTheme);
+});
+// Ejecutar la inicialización del tema de inmediato
+initTheme();
