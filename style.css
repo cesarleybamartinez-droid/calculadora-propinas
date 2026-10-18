@@ -361,6 +361,14 @@ body,
     flex-direction: column;
 }
 
+/* Evita que numeros enormes rompan la cuadricula */
+.result-row dd {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 60%;
+}
+
 .result-tittle {
     font-size: 0.875rem;
     font-weight: 600;

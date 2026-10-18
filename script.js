@@ -1,22 +1,25 @@
-﻿/**
+/**
  * ==============================================================================
  * PROYECTO 01: CALCULADORA DE PROPINAS Y DIVISIÓN DE CUENTAS EQUITATIVAS
  * Arquitectura: Separación de Estado, Lógica Pura y Capa de Presentación (DOM)
+ * Versión: Blindada contra errores y desbordamientos (Hardened)
  * ==============================================================================
  */
+
 // =============================================================================
 // 1. ESTADO DE LA APLICACIÓN (Single Source of Truth)
-// Centralizamos los datos en memoria para no depender de consultar el DOM a cada rato.
 // =============================================================================
 const state = {
-    bill: 0,                    // Monto de la cuenta base
-    tipPercentage: 0,           // Porcentaje de propina seleccionado (ej. 15 para 15%)
-    people: 1,                  // Número de personas a dividir la cuenta (minimo 1)
+    bill: 0,            // Monto de la cuenta base
+    tipPercentage: 0,   // Porcentaje de propina seleccionado (ej. 15 para 15%)
+    people: 1           // Número de comensales (mínimo 1)
 };
+
+// Límite máximo de cuenta para evitar desbordamientos aritméticos (10 Millones)
+const MAX_BILL = 10000000;
 
 // =============================================================================
 // 2. CACHÉ DE ELEMENTOS DEL DOM
-// Buscamos los elementos una sola vez y los guardamos en constantes para rendimiento.
 // ============================================================================= 
 const billInput = document.getElementById('bill-amount');
 const customTipInput = document.getElementById('custom-tip');
@@ -24,14 +27,13 @@ const peopleInput = document.getElementById('people-count');
 const peopleError = document.getElementById('people-error');
 const tipButtons = document.querySelectorAll('.btn-tip');
 
-// Elementos de salida (Pantalla de resultados)
+// Elementos de salida
 const totalTipDisplay = document.getElementById('total-tip-display');
 const totalBillDisplay = document.getElementById('total-bill-display');
 const personShareDisplay = document.getElementById('person-share-display');
 const resetBtn = document.getElementById('btn-reset');
 
 // Formateador oficial de moneda internacional (Intl API)
-// Garantiza que los números se muestren como "$1,250.00" de forma profesional.
 const currencyFormatter = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -41,151 +43,117 @@ const currencyFormatter = new Intl.NumberFormat('en-US', {
 
 // =============================================================================
 // 3. LÓGICA DE NEGOCIO PURA (Funciones Matemáticas Sin Efectos Secundarios)
-// Estas funciones no tocan el DOM; solo reciben números y devuelven cálculos.
 // =============================================================================
-/**
- * Calcula el monto total en dinero de la propina.
- * @param {number} bill - El monto base de la cuenta.
- * @param {number} percentage - El porcentaje de propina (0 - 100).
- * @returns {number} El monto calculado de la propina.
- */
+
 function calculateTipAmount(bill, percentage) {
-    if (bill <= 0 || percentage <= 0) return 0;
+    if (bill <= 0 || percentage <= 0 || !isFinite(bill)) return 0;
     return (bill * percentage) / 100;
 }
-/**
- * Calcula el monto total general (cuenta base + propina).
- * @param {number} bill - El monto base de la cuenta.
- * @param {number} tipAmount - El monto de la propina.
- * @returns {number} El total general.
- */
+
 function calculateTotalBill(bill, tipAmount) {
     return bill + tipAmount;
 }
-/**
- * Calcula la cuota individual que debe pagar cada persona.
- * Previene divisiones por cero o numeros negativos.
- * @param {number} totalBill - El monto total general de la cuenta.
- * @param {number} peopleCount - El número de personas a dividir la cuenta.
- * @returns {number} Cuota por persona.
- */
+
 function calculatePersonShare(totalBill, peopleCount) {
-    if (peopleCount <= 0 || isNaN(peopleCount)) return 0;
+    if (peopleCount <= 0 || isNaN(peopleCount) || !isFinite(totalBill)) return 0;
     return totalBill / peopleCount;
 }
 
 // =============================================================================
 // 4. CONTROLADOR Y ACTUALIZACIÓN DE LA VISTA (UI Render)
-// Lee el estado, ejecuta las fórmulas y actualiza la pantalla.
 // =============================================================================
+
 function updateUi() {
-    // 1. Ejecutar las operaciones matemáticas con el estado actual
-    const tipAmount = calculateTipAmount(state.bill, state.tipPercentage)
+    const tipAmount = calculateTipAmount(state.bill, state.tipPercentage);
     const totalBill = calculateTotalBill(state.bill, tipAmount);
     const personShare = calculatePersonShare(totalBill, state.people);
 
-    // 2. Renderizar los resultados formateados en pantalla
     totalTipDisplay.textContent = currencyFormatter.format(tipAmount);
     totalBillDisplay.textContent = currencyFormatter.format(totalBill);
     personShareDisplay.textContent = currencyFormatter.format(personShare);
 
-    // 3. Controlar el estado del botón de Reinicio (Reset)
-    // Se habilita solo si el usuario ha introducido algún valor.
     const hasUserData = state.bill > 0 || state.tipPercentage > 0 || state.people > 1;
     resetBtn.disabled = !hasUserData;
 }
 
-/**
- * Deselecciona visualmente todos los botones de propina fija.
- */
 function clearActiveTipButtons() {
     tipButtons.forEach(button => {
         button.classList.remove('active-tip');
     });
 }
+
 // =============================================================================
-// 5. MANEJADORES DE EVENTOS (Event Handlers)
-// Validamos entradas y actualizamos el estado.
+// 5. MANEJADORES DE EVENTOS (Event Handlers Blindados)
 // =============================================================================
 
-// A. Escucha del monto de la cuenta
+// Bloquear teclas no numéricas (e, E, -, +) para evitar notación científica o negativos
+[billInput, customTipInput, peopleInput].forEach(input => {
+    input.addEventListener('keydown', (e) => {
+        if (['e', 'E', '-', '+'].includes(e.key)) {
+            e.preventDefault();
+        }
+    });
+});
+
+// A. Escucha del monto de la cuenta con límite máximo
 billInput.addEventListener('input', (event) => {
     const rawValue = parseFloat(event.target.value);
-    // Si el campo esta vacio o es invalido, guardamos 0
-    state.bill = isNaN(rawValue) || rawValue <= 0 ? 0 : rawValue;
+    // Acotamos a un máximo de 10 millones y evitamos negativos
+    state.bill = isNaN(rawValue) || rawValue <= 0 ? 0 : Math.min(rawValue, MAX_BILL);
     updateUi();
 });
 
-// B. Escucha de los botones rapidos de propina (5%, 10%, 15%, 20%,)
+// B. Escucha de los botones rápidos de propina (5%, 10%, 15%, 20%)
 tipButtons.forEach(button => {
     button.addEventListener('click', () => {
-        // 1. Remover selección previa
         clearActiveTipButtons();
-
-        // 2. Marcar visualmente el boton presionado
         button.classList.add('active-tip');
-
-        // 3. Limpiar campo de propina personalizada
         customTipInput.value = '';
-
-        // 4. Actualizar  el estado con el valor del atributo data-tip
         state.tipPercentage = parseFloat(button.dataset.tip);
         updateUi();
     });
 });
 
-// C. Escucha del campo de propina personalizado
+// C. Escucha de propina personalizada con tope máximo del 100%
 customTipInput.addEventListener('input', (event) => {
-    // Al escribir un porcentaje personalizado, desmarcamos los botones predefinidos.
     clearActiveTipButtons();
-
     const rawValue = parseFloat(event.target.value);
-
-    // Si el campo esta vacio o es invalido, guardamos 0
-    state.tipPercentage = isNaN(rawValue) || rawValue <= 0 ? 0 : rawValue;
-
-    // 4. Actualizar la interfaz de usuario
+    // Impedimos que introduzcan porcentajes mayores a 100% o negativos
+    state.tipPercentage = isNaN(rawValue) || rawValue <= 0 ? 0 : Math.min(100, rawValue);
     updateUi();
 });
 
-// D. Escucha de cambios en el número de personas con validacion de reglas de negocio
+// D. Escucha del número de personas con validación de enteros estrictos
 peopleInput.addEventListener('input', (event) => {
-    const rawValue = parseInt(event.target.value, 10);
+    const rawValue = parseFloat(event.target.value);
 
-    // Validacion de reglas de negocio: Numero de personas debe ser minimo 1
-    if (isNaN(rawValue) || rawValue <= 0) {
+    // Debe ser un número válido, mayor a cero Y entero (no decimales como 2.5)
+    if (isNaN(rawValue) || rawValue <= 0 || !Number.isInteger(rawValue)) {
         state.people = 0;
         peopleInput.style.borderColor = 'var(--clr-error)';
-        peopleError.textContent = 'Debe ser minimo 1 persona';
+        peopleError.textContent = 'Debe ser un número entero (mín. 1)';
     } else {
         state.people = rawValue;
         peopleInput.style.borderColor = 'transparent';
-        peopleError.textContent = '';  // Limpiar mensaje de error
+        peopleError.textContent = '';
     }
 
-    // Actualizar la interfaz de usuario
     updateUi();
 });
 
-// E. Escucha del boton de reinicio
+// E. Escucha del botón de reinicio
 resetBtn.addEventListener('click', () => {
-    // Restaurar el estado original
     state.bill = 0;
     state.tipPercentage = 0;
     state.people = 1;
 
-    // Limpiar los campos del formulario
     billInput.value = '';
     customTipInput.value = '';
     peopleInput.value = '1';
-
-    // Limpiar estilos de error
     peopleInput.style.borderColor = 'transparent';
     peopleError.textContent = '';
-    // 3. Remover clases activas de botones
+    
     clearActiveTipButtons();
-
-    // 4. Actualizar la vista a ceros ($0.00)
     updateUi();
 });
 
@@ -196,49 +164,33 @@ resetBtn.addEventListener('click', () => {
 const themeToggleBtn = document.getElementById('theme-toggle');
 const themeIcon = document.getElementById('theme-icon');
 
-/**
- * Aplica el tema recibido y sincroniza el ícono, accesibilidad y localStorage.
- * @param {'light' | 'dark'} theme - El tema que queremos aplicar.
- */
-
 function applyTheme(theme) {
-    // 1. Asignamos o removemos el atributo data-theme en la raíz del documento (<html>)
     if (theme === 'dark') {
         document.documentElement.setAttribute('data-theme', 'dark');
-        themeIcon.textContent = '☀️'; // Sol para volver al modo claro
+        themeIcon.textContent = '\u2600\uFE0F'; // Sol para volver al modo claro
         themeToggleBtn.setAttribute('aria-label', 'Cambiar a modo claro');
     } else {
         document.documentElement.removeAttribute('data-theme');
-        themeIcon.textContent = '🌙'; // Luna para modo oscuro
+        themeIcon.textContent = '\u{1F319}'; // Luna para modo oscuro
         themeToggleBtn.setAttribute('aria-label', 'Cambiar a modo oscuro');
     }
-
-    // 3. Persistencia: Guardamos la preferencia en localStorage (navegador del usuario)
     localStorage.setItem('theme-preference', theme);
 }
-/**
- * Inicializa el tema al cargar la página:
- * 1º Prioridad: Lo que el usuario eligió antes (guardado en localStorage).
- * 2º Prioridad: La preferencia de su sistema operativo (Windows/Mac en modo oscuro).
- */
+
 function initTheme() {
     const savedTheme = localStorage.getItem('theme-preference');
-
-    // Si el usuario ya habia elegido un tema, lo aplicamos
     if (savedTheme) {
         applyTheme(savedTheme);
     } else {
-
-        // Detectar si el sistema operativo tiene modo oscuro activado por defecto
-        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches; //True si el SO esta en modo oscuro
+        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         applyTheme(systemPrefersDark ? 'dark' : 'light');
     }
 }
-// Escuchar el clic en el botón de cambio de tema
+
 themeToggleBtn.addEventListener('click', () => {
     const isCurrentlyDark = document.documentElement.getAttribute('data-theme') === 'dark';
     const newTheme = isCurrentlyDark ? 'light' : 'dark';
     applyTheme(newTheme);
 });
-// Ejecutar la inicialización del tema de inmediato
+
 initTheme();
