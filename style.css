@@ -369,15 +369,18 @@ body,
     max-width: 60%;
 }
 
-.result-tittle {
+.result-tittle,
+.result-title {
     font-size: 0.875rem;
     font-weight: 600;
+    color: #ffffff; /* Blanco puro: contraste 13.5:1 */
 }
 
-/* Subtitulos pequeños: Propina sugerida, Cuenta general, Cuota individual */
-.result-subtitle {
+/* Subtítulos pequeños: Propina sugerida, Cuenta general, Cuota individual */
+.result-subtitle,
+.result-subtittle {
     font-size: 0.75rem;
-    color: var(--clr-text-muted);
+    color: #c5e4e7; /* Menta claro: contraste 9.2:1 */
 }
 
 /* Valores numericos grandes (propina total, total con propina, total por persona) */
@@ -388,18 +391,40 @@ body,
 }
 
 /* Fila especial para el resultado mas importante (Total por persona) */
-.result-row.highlight {
-    background-color: rgba(255, 255, 255, 0.5);
-    border-radius: var(--radius-sm);
-    padding: 0.75rem;
-    border-left: 4px solid var(--clr-text-muted);
+/* El monto más importante se destaca por su ID sin alterar el fondo */
+#person-share-display {
+    font-size: 2.25rem;
+    font-weight: 900;
+    color: #ffffff;
+}
+
+
+.result-row.highlight .result-tittle {
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.result-row.highlight .result-subtittle,
+.result-row.highlight small {
+    color: #c5e4e7;
+    font-size: 0.85rem;
 }
 
 .result-row.highlight dd {
-    color: var(--clr-text-muted);
-    font-size: 2rem;
+    color: #ffffff;
+    font-size: 2.25rem;
+    font-weight: 800;
 }
 
+/* Regla global para elementos small / pie de página */
+small {
+    color: #334155;
+    font-weight: 500;
+}
+
+[data-theme="dark"] small {
+    color: #cbd5e1;
+}
 
 /* Boton de Reinicio*/
 .btn-reset {
@@ -497,6 +522,6 @@ body,
 }
 
 .form-group input[type="number"]::placeholder {
-    color: #94a3b8;
-    opacity: 0.7;
+    color: #475569;
+    opacity: 1;
 }
