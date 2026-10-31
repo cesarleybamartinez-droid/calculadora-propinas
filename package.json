@@ -1,0 +1,28 @@
+{
+  "name": "calculadora-de-propinas",
+  "version": "1.0.0",
+  "description": "Calculadora de Propinas y División de Cuentas Equitativas",
+  "main": "script.js",
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "bench": "node calculator.bench.js",
+    "test:e2e": "playwright test",
+    "test:load": "autocannon -c 100 -d 10 http://127.0.0.1:8080"
+  },
+  "keywords": [
+    "finance",
+    "calculator",
+    "testing",
+    "vitest",
+    "playwright"
+  ],
+  "author": "Cesar Leyba",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.64.1",
+    "autocannon": "^8.0.0",
+    "vitest": "^5.0.5"
+  }
+}

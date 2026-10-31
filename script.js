@@ -9,14 +9,19 @@
 // =============================================================================
 // 1. ESTADO DE LA APLICACIÓN (Single Source of Truth)
 // =============================================================================
+import {
+    MAX_BILL,
+    currencyFormatter,
+    calculateTipAmount,
+    calculateTotalBill,
+    calculatePersonShare
+} from './calculator.js';
+
 const state = {
     bill: 0,            // Monto de la cuenta base
     tipPercentage: 0,   // Porcentaje de propina seleccionado (ej. 15 para 15%)
     people: 1           // Número de comensales (mínimo 1)
 };
-
-// Límite máximo de cuenta para evitar desbordamientos aritméticos (10 Millones)
-const MAX_BILL = 10000000;
 
 // =============================================================================
 // 2. CACHÉ DE ELEMENTOS DEL DOM
@@ -33,34 +38,8 @@ const totalBillDisplay = document.getElementById('total-bill-display');
 const personShareDisplay = document.getElementById('person-share-display');
 const resetBtn = document.getElementById('btn-reset');
 
-// Formateador oficial de moneda internacional (Intl API)
-const currencyFormatter = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2
-});
-
 // =============================================================================
-// 3. LÓGICA DE NEGOCIO PURA (Funciones Matemáticas Sin Efectos Secundarios)
-// =============================================================================
-
-function calculateTipAmount(bill, percentage) {
-    if (bill <= 0 || percentage <= 0 || !isFinite(bill)) return 0;
-    return (bill * percentage) / 100;
-}
-
-function calculateTotalBill(bill, tipAmount) {
-    return bill + tipAmount;
-}
-
-function calculatePersonShare(totalBill, peopleCount) {
-    if (peopleCount <= 0 || isNaN(peopleCount) || !isFinite(totalBill)) return 0;
-    return totalBill / peopleCount;
-}
-
-// =============================================================================
-// 4. CONTROLADOR Y ACTUALIZACIÓN DE LA VISTA (UI Render)
+// 3. CONTROLADOR Y ACTUALIZACIÓN DE LA VISTA (UI Render)
 // =============================================================================
 
 function updateUi() {
@@ -83,7 +62,7 @@ function clearActiveTipButtons() {
 }
 
 // =============================================================================
-// 5. MANEJADORES DE EVENTOS (Event Handlers Blindados)
+// 4. MANEJADORES DE EVENTOS (Event Handlers Blindados)
 // =============================================================================
 
 // Bloquear teclas no numéricas (e, E, -, +) para evitar notación científica o negativos
@@ -158,7 +137,7 @@ resetBtn.addEventListener('click', () => {
 });
 
 // =============================================================================
-// 6. GESTIÓN DEL TEMA (MODO CLARO / OSCURO) CON PERSISTENCIA
+// 5. GESTIÓN DEL TEMA (MODO CLARO / OSCURO) CON PERSISTENCIA
 // =============================================================================
 
 const themeToggleBtn = document.getElementById('theme-toggle');
