@@ -361,13 +361,24 @@ body,
     flex-direction: column;
 }
 
-/* Evita que numeros enormes rompan la cuadricula */
+/* Evita desbordamientos permitiendo que el número ocupe su espacio natural */
 .result-row dd {
-    overflow: hidden;
-    text-overflow: ellipsis;
+    overflow: visible;
     white-space: nowrap;
-    max-width: 60%;
+    text-align: right;
+    max-width: 65%;
+    font-size: clamp(1.15rem, 4.2vw, 1.75rem); /* Se adapta automáticamente a celulares */
+    font-weight: 800;
+    color: #ffffff;
 }
+
+/* El monto por persona se escala de forma fluida */
+#person-share-display {
+    font-size: clamp(1.35rem, 5.2vw, 2.15rem); /* En celulares se ajusta y en PC se ve imponente */
+    font-weight: 900;
+    color: #ffffff;
+}
+
 
 .result-tittle,
 .result-title {
