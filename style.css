@@ -1,34 +1,24 @@
 ﻿/*
 ====================================================================================
 1. Variables de Diseño (Design Tokens)
-Centralizamos colores, sombrea y radios de borde para facil mantenimiento.
+Centralizamos colores, sombras y radios de borde para fácil mantenimiento.
 ====================================================================================
 */
 
 :root {
-    /* Paleta Cromatica */
+    /* Paleta Cromática */
     --clr-primary: #0d9488;
-    /* Verde azulado principal */
     --clr-primary-hover: #0f766e;
-    /* Mas oscuro al pasar el cursor */
     --clr-primary-light: #ccfbf1;
-    /* Tono suave para fondos y seleccion */
     --clr-bg-app: #f0fdfa;
-    /* Fondo general de la pagina */
     --clr-bg-surface: #ffffff;
-    /* Fondo de las tarjetas */
     --clr-bg-result: #115e59;
-    /* Fondo oscuro de la tarjeta de resultados */
     --clr-text-main: #134e4a;
-    /* Texto principal de alto contraste */
     --clr-text-muted: #5eead4;
-    /* Texto secundario para subtitulos claros */
     --clr-text-light: #f0fdfa;
-    /* Texto claro sobre fondo oscuro */
-    --clr-error: #e11d48;
-    /* Rojo accesible para mensajes de error */
+    --clr-error: #b91c1c;
 
-    /* Tipografia y espaciados */
+    /* Tipografía y espaciados */
     --font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, sans-serif;
     --radius-sm: 6px;
     --radius-md: 12px;
@@ -40,41 +30,27 @@ Centralizamos colores, sombrea y radios de borde para facil mantenimiento.
 
 /* ==========================================================================
    PALETA PARA MODO OSCURO (DARK THEME TOKENS)
-   Se activa automáticamente cuando el elemento <html> tiene data-theme="dark"
    ========================================================================== */
 [data-theme="dark"] {
     --clr-primary: #14b8a6;
-    /* Verde azulado un poco más brillante */
     --clr-primary-hover: #2dd4bf;
-
     --clr-primary-light: #134e4a;
-    /* Fondo oscuro para botones de propina */
     --clr-bg-app: #0f172a;
-    /* Fondo general oscuro (Slate 900) */
     --clr-bg-surface: #1e293b;
-    /* Fondo de las tarjetas */
     --clr-bg-result: #042f2e;
-    /* Fondo oscuro de la tarjeta de resultados */
     --clr-text-main: #f8fafc;
-    /* Texto blanco hueso de alto contraste */
     --clr-text-muted: #5eead4;
-    /* Texto secundario para subtitulos claros */
     --clr-text-light: #f8fafc;
-    /* Texto claro sobre fondo oscuro */
     --shadow-card: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
-
 }
 
-/*===================================================================================
-    2. RESET Y CONFIGURACION BASE
-    Garatizamos consistencia entre tododos los navegadores (Chrome, Safari, Firefox).
-    ==========================================================================================*/
-
+/* ==========================================================================
+   2. RESET Y CONFIGURACIÓN BASE (Optimizado para móviles)
+   ========================================================================== */
 *,
 *::before,
 *::after {
     box-sizing: border-box;
-    /* El padding y el border no alteran el ancho total */
     margin: 0;
     padding: 0;
 }
@@ -84,33 +60,26 @@ body {
     background-color: var(--clr-bg-app);
     color: var(--clr-text-main);
     line-height: 1.5;
-    /* Separación entre lineas para mejor legibilidad */
     min-height: 100vh;
-    /* Altura minima de la pantalla */
     display: flex;
-    /* Flexbox para centrar el contenido */
     flex-direction: column;
-    /* Direccion del flexbox (vertical) */
     align-items: center;
     justify-content: center;
-    padding: 1.5rem;
+    padding: 1rem 0.75rem; /* Padding reducido para aprovechar el ancho en móviles */
+}
 
+/* Transiciones suaves */
+body,
+.calculator-container,
+.form-group input[type="number"],
+.btn-tip,
+.results-section {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 /* ==========================================================================
    3. ENCABEZADO Y PIE DE PÁGINA
    ========================================================================== */
-
-/* Transición suave para que el cambio de color no sea brusco al ojo */
-body,
-.calculator-container,
-.form-group input[type="number"],
-.btn-tip,
-.result-section {
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-/* Alineación flexible del encabezado con el botón */
 .header-content {
     display: flex;
     align-items: center;
@@ -124,7 +93,6 @@ body,
     text-align: left;
 }
 
-/*Estilo del  boton circular de cambio de tema */
 .btn-theme-toggle {
     width: 2.75rem;
     height: 2.75rem;
@@ -154,11 +122,11 @@ body,
 
 .app-header {
     text-align: center;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
 }
 
 .app-header h1 {
-    font-size: 2rem;
+    font-size: 1.75rem;
     font-weight: 800;
     letter-spacing: -0.5px;
     color: var(--clr-text-main);
@@ -178,19 +146,17 @@ body,
 
 /* ==========================================================================
    4. ESTRUCTURA PRINCIPAL (LAYOUT MOBILE-FIRST)
-   Por defecto en móviles: una sola columna apilada verticalmente.
    ========================================================================== */
-
 .calculator-container {
     width: 100%;
     max-width: 900px;
     background-color: var(--clr-bg-surface);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-card);
-    padding: 1.5rem;
+    padding: 1.25rem 1rem; /* Máximo ancho útil en pantalla pequeña */
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 1.5rem;
 }
 
 .calculator-card {
@@ -199,17 +165,16 @@ body,
 }
 
 /* ==========================================================================
-   5. SECCIÓN 1: FORMULARIO DE ENTRADA (INPUTS Y BOTONES)
+   5. SECCIÓN 1: FORMULARIO DE ENTRADA
    ========================================================================== */
-
 .input-section {
-    padding: 0.5rem;
+    padding: 0.25rem;
 }
 
 .form-group {
     display: flex;
     flex-direction: column;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
 }
 
 .form-group:last-child {
@@ -219,11 +184,10 @@ body,
 .form-group label {
     font-size: 0.875rem;
     font-weight: 600;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.4rem;
     color: var(--clr-text-main);
 }
 
-/* Estilos de los campos de entrada */
 .form-group input[type="number"] {
     width: 100%;
     padding: 0.75rem 1rem;
@@ -238,42 +202,35 @@ body,
     background-color: var(--clr-bg-app);
 }
 
-/* Efecto visual de enfoque (Focus) */
 .form-group input[type="number"]:focus {
     outline: none;
     border-color: var(--clr-primary);
     background-color: var(--clr-bg-surface);
 }
 
-/* Ocultar flechas nativas en campos numericos para mantener el diseño limpio */
 .form-group input[type="number"]::-webkit-outer-spin-button,
 .form-group input[type="number"]::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
 
-/* Firefox */
 .form-group input[type="number"] {
     -moz-appearance: textfield;
 }
 
-/* Mensajes de error para validacion */
 .error-message {
     color: var(--clr-error);
     font-size: 0.75rem;
     font-weight: 600;
     margin-top: 0.25rem;
-    height: 1.5rem;
-    /* Reserva el espacio para que no brinque la pantalla al aparecer */
+    min-height: 1.25rem;
 }
 
-/* Cuadrilla de botones de propina (CSS Grid) */
 .tip-fieldset {
     border: none;
     padding: 0;
 }
 
-/* Leyenda delfieldset (Porcentaje de Propina) */
 .tip-fieldset legend {
     font-size: 0.875rem;
     font-weight: 600;
@@ -281,16 +238,13 @@ body,
     color: var(--clr-text-main);
 }
 
-/* Contenedor de botones de propina (Grid) */
 .tip-options {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    /* 2 columnas en teléfonos */
     gap: 0.75rem;
     margin-bottom: 0.75rem;
 }
 
-/* Botones rapidos de propina (5%, 10%, 15%, 20%) */
 .btn-tip {
     padding: 0.6rem 0;
     border: 2px solid transparent;
@@ -304,13 +258,11 @@ body,
     font-family: inherit;
 }
 
-/* Estilo hover: Botones un poco mas oscuros al pasar el cursor */
 .btn-tip:hover {
     background-color: var(--clr-primary);
     color: #ffffff;
 }
 
-/* Clase dinámica que agregaremos con JavaScript al presionar un botón */
 .btn-tip.active-tip {
     background-color: var(--clr-primary);
     color: #ffffff;
@@ -323,17 +275,17 @@ body,
 }
 
 /* ==========================================================================
-   6. SECCIÓN 2: TARJETA DE RESULTADOS
+   6. SECCIÓN 2: TARJETA DE RESULTADOS (RESPONSIVE FLUIDO)
    ========================================================================== */
 .results-section {
     background-color: var(--clr-bg-result);
     color: var(--clr-text-light);
     border-radius: var(--radius-md);
-    padding: 1.75rem;
+    padding: 1.25rem 1rem; /* Más espacio horizontal en móviles */
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: 1.5rem;
+    gap: 1.25rem;
 }
 
 .results-section h2 {
@@ -343,88 +295,57 @@ body,
     padding-bottom: 0.75rem;
 }
 
-/* "Definition list" para mostrar los resultados de manera semantica */
 .results-display {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
+    gap: 1rem;
 }
 
+/* Fila de resultados con Flexbox elástico */
 .result-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0;
 }
 
 .result-row dt {
     display: flex;
     flex-direction: column;
+    min-width: 0;
+    flex: 1;
 }
-
-/* Evita desbordamientos permitiendo que el número ocupe su espacio natural */
-.result-row dd {
-    overflow: visible;
-    white-space: nowrap;
-    text-align: right;
-    max-width: 65%;
-    font-size: clamp(1.15rem, 4.2vw, 1.75rem); /* Se adapta automáticamente a celulares */
-    font-weight: 800;
-    color: #ffffff;
-}
-
-/* El monto por persona se escala de forma fluida */
-#person-share-display {
-    font-size: clamp(1.35rem, 5.2vw, 2.15rem); /* En celulares se ajusta y en PC se ve imponente */
-    font-weight: 900;
-    color: #ffffff;
-}
-
 
 .result-tittle,
 .result-title {
     font-size: 0.875rem;
     font-weight: 600;
-    color: #ffffff; /* Blanco puro: contraste 13.5:1 */
+    color: #ffffff;
 }
 
-/* Subtítulos pequeños: Propina sugerida, Cuenta general, Cuota individual */
 .result-subtitle,
 .result-subtittle {
     font-size: 0.75rem;
-    color: #c5e4e7; /* Menta claro: contraste 9.2:1 */
-}
-
-/* Valores numericos grandes (propina total, total con propina, total por persona) */
-.result-row dd {
-    font-size: 1.75rem;
-    font-weight: 900;
-    color: #ffffff;
-}
-
-/* Fila especial para el resultado mas importante (Total por persona) */
-/* El monto más importante se destaca por su ID sin alterar el fondo */
-#person-share-display {
-    font-size: 2.25rem;
-    font-weight: 900;
-    color: #ffffff;
-}
-
-
-.result-row.highlight .result-tittle {
-    color: #ffffff;
-    font-weight: 700;
-}
-
-.result-row.highlight .result-subtittle,
-.result-row.highlight small {
     color: #c5e4e7;
-    font-size: 0.85rem;
 }
 
-.result-row.highlight dd {
-    color: #ffffff;
-    font-size: 2.25rem;
+/* Números fluidos: se ajustan exactamente al ancho disponible sin cortarse */
+.result-row dd {
+    margin: 0;
+    text-align: right;
+    white-space: nowrap;
+    font-size: clamp(1rem, 4.4vw, 1.65rem);
     font-weight: 800;
+    color: #ffffff;
+    flex-shrink: 0;
+}
+
+/* Total por persona destacado */
+#person-share-display {
+    font-size: clamp(1.2rem, 5.2vw, 2rem);
+    font-weight: 900;
+    color: #ffffff;
 }
 
 /* Regla global para elementos small / pie de página */
@@ -437,7 +358,7 @@ small {
     color: #cbd5e1;
 }
 
-/* Boton de Reinicio*/
+/* Botón de Reinicio */
 .btn-reset {
     width: 100%;
     padding: 0.85rem;
@@ -452,6 +373,7 @@ small {
     color: var(--clr-primary-hover);
     transition: var(--radius-sm);
     font-family: inherit;
+    margin-top: 0.5rem;
 }
 
 .btn-reset:hover:not(:disabled) {
@@ -460,16 +382,11 @@ small {
     transform: translateY(-2px);
 }
 
-/* Efecto de pulsacion al presionar el boton */
 .btn-reset:disabled {
     opacity: 0.35;
     cursor: not-allowed;
 }
 
-/*==========================================================================
-  7. CLASE UTILITARIA DE ACCESIBILIDAD
-   Oculta texto de la pantalla visual pero lo mantiene para lectores de pantalla.
-   ========================================================================== */
 .visually-hidden {
     position: absolute !important;
     height: 1px;
@@ -483,39 +400,38 @@ small {
 }
 
 /* ==========================================================================
-   8. RESPONSIVE DESIGN (MEDIA QUERY PARA PANTALLAS GRANDES)
-   A partir de 768px (tablets y laptops), dividimos en 2 columnas paralelas.
+   7. MEDIA QUERIES PARA PANTALLAS GRANDES (TABLETS Y LAPTOPS)
    ========================================================================== */
-
 @media (min-width: 768px) {
-    .app-header {
+    body {
+        padding: 1.5rem;
+    }
+
+    .app-header h1 {
         font-size: 2rem;
     }
 
     .calculator-container {
         flex-direction: row;
         padding: 2rem;
+        gap: 2rem;
     }
 
-    /* Asignamos los espacios (flex-grow) para que cada columna ocupe su espacio ideal */
     .input-section,
-    .result-section {
+    .results-section {
         flex: 1;
-        /* Ambas mitades ocupan exactamente el 50% */
     }
 
-    /* En tablets, los botones de propina se disponen en 4 columnas */
     .tip-options {
         grid-template-columns: repeat(3, 1fr);
-        /* 3 columnas en pantallas medianas/grandes */
     }
 
-    .result-section {
+    .results-section {
         padding: 2.25rem;
     }
 }
 
-/* Borde sutil y contraste perfecto de inputs en modo oscuro */
+/* Estilos de modo oscuro para inputs */
 [data-theme="dark"] .form-group input[type="number"] {
     border-color: #334155;
     background-color: #0f172a;
